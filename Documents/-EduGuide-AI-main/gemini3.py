@@ -17,7 +17,7 @@ if "GROQ_API_KEY" in st.secrets:
 else:
     MY_GROQ_KEY = os.getenv("GROQ_API_KEY", "YOUR_LOCAL_GROQ_KEY_HERE")
 
-# --- 4. ماسٹر سسٹم پرامپٹ ---
+# --- 4. ماسٹر سسٹم پرامپٹ (ملٹی لنگویج اور سکرپٹ لاک ورژن) ---
 SYSTEM_PROMPT = """
 تمہارا نام 'EduGuide AI' ہے۔ تم ایک نہایت تجربہ کار پاکستانی تعلیمی مشیر ہو۔
 تمہارے پاس یہ 7 مہارتیں ہیں جن پر تم نے فوکس کرنا ہے:
@@ -26,11 +26,17 @@ SYSTEM_PROMPT = """
 3. Scholarship Info: پاکستانی اسکالرشپس (PEEF, HEC وغیرہ) کی معلومات دینا۔
 4. Exam Tips: بورڈ پیپر حل کرنے کے طریقے بتانا۔
 5. Quiz Mode: طالب علم سے سوالات پوچھ کر اس کا ٹیسٹ لینا۔
-6. Language: صرف اردو (Urdu) اور صاف انگلش (English) استعمال کرو۔
+6. Language: یوزر کی زبان کے مطابق جواب دینا (تفصیل نیچے دیکھیں)۔
 7. Comparison: مختلف فیلڈز کا موازنہ کرنا۔
 
-انتہائی اہم ہدایت: کسی دوسری زبان کے حروف (جیسے luân, 結) ہرگز استعمال نہ کرنا۔
-جواب ہمیشہ ہیڈنگز اور بلٹ پوائنٹس میں دو۔
+سخت لسانی قوانین (STRICT LANGUAGE RULES):
+1. Analyze the user's input language and script very carefully.
+2. اگر یوزر اردو رسم الخط (Urdu Script) میں سوال پوچھے، تو پورا جواب صرف خالص اردو رسم الخط میں دو۔
+3. اگر یوزر رومن اردو (Roman Urdu) میں سوال پوچھے، تو پورا جواب صرف خالص رومن اردو میں دو۔
+4. اگر یوزر انگلش (English) میں سوال پوچھے، تو پورا جواب صرف اور صرف انگلش میں ہونا چاہیے۔
+5. انتہائی اہم ہدایت: کسی دوسری زبان خصوصاً ہندی رسم الخط (जैसे: चरण, अगला) یا ٹوٹے ہوئے لاطینی الفاظ (जैसे: gā, rō) کا استعمال ہرگز نہیں کرنا۔ 'اگلے مراحل' کے لیے صرف اردو الفاظ جیسے 'اگلا مرحلہ' یا 'اگلے اقدامات' استعمال کرو۔
+
+جواب ہمیشہ خوبصورت ہیڈنگز اور بلٹ پوائنٹس میں دو۔
 """
 
 # --- سائڈ بار (فیچرز لسٹ) ---
@@ -95,7 +101,8 @@ if st.button("مشورہ حاصل کریں 🔍"):
                     messages=[
                         {"role": "system", "content": SYSTEM_PROMPT},
                         {"role": "user", "content": user_query}
-                    ]
+                    ],
+                    temperature=0.2  # <--- کم درجہ حرارت تاکہ ماڈل قوانین پر سخت رہے اور مکسنگ نہ کرے
                 )
                 answer = res.choices[0].message.content
                 
@@ -108,6 +115,7 @@ if st.button("مشورہ حاصل کریں 🔍"):
         except Exception as e:
             st.error(f"نیٹ ورک یا API Key کا مسئلہ ہے۔ تفصیل: {str(e)}")
 
-# --- فوٹر ---
+# --- فوٹر --
+# Cache cleaner comment v2 - forcing cloud reboot
 st.divider()
 st.caption("AI Seekho 2026 Competition Project | Prepared for Google Online Competition")
